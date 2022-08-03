@@ -2,6 +2,7 @@
 #include <cuda_runtime.h>
 #include <stdio.h>
 #include "gtest/gtest.h"
+#include "cereal/cereal.hpp"
 
 
 __global__ void exec_kernel()

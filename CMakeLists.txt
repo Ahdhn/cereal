@@ -28,6 +28,12 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 
+# cereal
+FetchContent_Declare(cereal
+    GIT_REPOSITORY https://github.com/USCiLab/cereal.git
+    GIT_TAG        v1.3.2
+)
+FetchContent_Populate(cereal)
 # Auto-detect GPU architecture
 include("cmake/AutoDetectCudaArch.cmake")
 
@@ -57,7 +63,9 @@ target_compile_options(developer_flags INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:${cxx_flags}>
     $<$<COMPILE_LANGUAGE:CUDA>:${cuda_flags}>
 )
-target_include_directories(developer_flags INTERFACE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+target_include_directories(developer_flags 
+	INTERFACE "${cereal_SOURCE_DIR}/include"
+	INTERFACE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 target_compile_features(developer_flags INTERFACE cxx_std_17)
 
