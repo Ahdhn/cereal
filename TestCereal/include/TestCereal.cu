@@ -1,25 +1,35 @@
 #include <assert.h>
-#include <cuda_runtime.h>
 #include <stdio.h>
-#include "gtest/gtest.h"
+#include <sstream>
+#include <fstream>
+
 #include "cereal/cereal.hpp"
+#include"cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
 
-
-__global__ void exec_kernel()
+struct MyClass
 {
-    printf("\n I am thread %d from exec_kernel\n", threadIdx.x);
-}
+    int x, y, z;
 
-TEST(Test, exe)
-{
-    exec_kernel<<<1, 1>>>();
-    auto err = cudaDeviceSynchronize();
-    EXPECT_EQ(err, cudaSuccess);    
-}
+    template<class Archive>
+    void serialize(Archive&archive)
+    {
+        archive(x, y, z);
+    }
+};
+
 
 int main(int argc, char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    std::ofstream ss("MyClass.json");
+   // cereal::BinaryOutputArchive archive(ss);
+    cereal::JSONOutputArchive archive(ss);
 
-    return RUN_ALL_TESTS();
+    MyClass m1;
+    m1.x = 1;
+    m1.y = 99;
+    m1.z = 77;
+    archive(CEREAL_NVP(m1));
+
+    return 0;
 }
